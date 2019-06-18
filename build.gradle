@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 def safeExtGet(prop, fallback) {
     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
@@ -10,7 +11,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.novoda:bintray-release:0.9.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -21,18 +23,35 @@ repositories {
     google()
 }
 
-publish {
+ext {
+    bintrayRepo = 'android-react-native-gesture-handler' // Name of the Bintray repo you created
+    bintrayName = 'com.swmansion.gesturehandler:gesture-handler' // Bintray package name
 
-    def groupProjectID = 'com.swmansion.gesturehandler'
-    def artifactProjectID = 'gesturehandler'
-    def publishVersionID = '1.0'
+    publishedGroupId = 'com.swmansion.gesturehandler' // Group ID of the SDK which will be added in implementation line of gradle
+    artifact = 'gesture-handler' // Artifact ID of the SDK which will be added in implementation line of gradle
+    libraryVersion = '2.1' // Version of the library you created in Bintray
 
-    userOrg = '0366459432'
-    repoName = 'android-react-native-gesture-handler'
-    groupId = groupProjectID
-    artifactId = artifactProjectID
-    publishVersion = publishVersionID
-    desc = 'This library use for react-native android'
+    libraryName = 'React native gesture handler' // It is generally the module name
+    libraryDescription = 'This is library to handle gesture in react-native module' // Small description of the library
+
+    siteUrl = 'https://github.com/thphuoc/react-native-gesture-handler'
+    gitUrl = 'https://github.com/thphuoc/react-native-gesture-handler.git'
+
+    developerId = 'thphuoc'
+    developerName = 'Tran Huu Phuoc'
+    developerEmail = 'tranhuuphuoc@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+
+    //Bintray Credentials
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+    bintrayUsername = properties.getProperty('BINTRAY_USERNAME')
+    bintrayUserOrg = properties.getProperty('BINTRAY_ORG')
+    bintrayApiKey = properties.getProperty('BINTRAY_API_KEY')
 }
 
 android {
@@ -61,3 +80,5 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.walmartlabs.ern:react-native:0.59.9"
 }
+
+apply from: 'bintray.script'
